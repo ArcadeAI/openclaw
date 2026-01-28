@@ -1,0 +1,35 @@
+{
+  "name": "@moltbot/arcade",
+  "version": "2026.1.28",
+  "type": "module",
+  "description": "Moltbot plugin for Arcade.dev tool authorization and execution",
+  "keywords": [
+    "moltbot",
+    "arcade",
+    "mcp",
+    "tools",
+    "oauth",
+    "ai-agents"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moltbot/moltbot.git",
+    "directory": "extensions/arcade"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "0.34.47",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "moltbot": "workspace:*"
+  },
+  "peerDependencies": {
+    "moltbot": "*"
+  },
+  "moltbot": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}
