@@ -80,14 +80,6 @@ export type ArcadeExecuteResult = {
   authorization_url?: string;
 };
 
-export type ArcadeToolsListResponse = {
-  items: ArcadeToolDefinition[];
-  total_count: number;
-  page_count: number;
-  limit: number;
-  offset: number;
-};
-
 // ============================================================================
 // Client Implementation - Wraps @arcadeai/arcadejs SDK
 // ============================================================================
@@ -181,7 +173,7 @@ export class ArcadeClient {
    */
   async getConfig(): Promise<Record<string, unknown>> {
     // SDK doesn't have a direct config endpoint, use health as proxy
-    const health = await this.sdk.health.get();
+    const health = await this.sdk.health.check();
     return health as unknown as Record<string, unknown>;
   }
 
@@ -518,13 +510,12 @@ export class ArcadeClient {
    * List user's auth connections
    */
   async listUserConnections(userId?: string): Promise<unknown[]> {
-    // Note: SDK may not expose this directly, using admin endpoint
     const id = userId ?? this.userId;
     if (!id) return [];
 
     try {
-      const response = await this.sdk.admin.users.connections.list({ user_id: id });
-      return response.data ?? [];
+      const response = await this.sdk.admin.userConnections.list({ user: { id } });
+      return response.items ?? [];
     } catch {
       return [];
     }
@@ -534,7 +525,7 @@ export class ArcadeClient {
    * Delete a user connection
    */
   async deleteUserConnection(connectionId: string): Promise<void> {
-    await this.sdk.admin.users.connections.delete(connectionId);
+    await this.sdk.admin.userConnections.delete(connectionId);
   }
 
   // ==========================================================================
@@ -576,27 +567,6 @@ export class ArcadeAuthError extends Error {
   ) {
     super(message);
     this.name = "ArcadeAuthError";
-  }
-}
-
-export class ArcadeRateLimitError extends Error {
-  constructor(
-    message: string,
-    public readonly retryAfterMs: number,
-    public readonly limit?: string,
-  ) {
-    super(message);
-    this.name = "ArcadeRateLimitError";
-  }
-}
-
-export class ArcadeTimeoutError extends Error {
-  constructor(
-    message: string,
-    public readonly path: string,
-  ) {
-    super(message);
-    this.name = "ArcadeTimeoutError";
   }
 }
 
